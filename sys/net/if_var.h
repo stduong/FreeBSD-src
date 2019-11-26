@@ -75,9 +75,11 @@ struct	netmap_adapter;
 #include <net/vnet.h>
 #endif /* _KERNEL */
 #include <sys/counter.h>
+#include <sys/cpuset.h>
 #include <sys/lock.h>		/* XXX */
 #include <sys/mutex.h>		/* struct ifqueue */
 #include <sys/rwlock.h>		/* XXX */
+#include <sys/rmlock.h>         /* XXX */
 #include <sys/sx.h>		/* XXX */
 #include <sys/_task.h>		/* if_link_task */
 
@@ -242,7 +244,7 @@ struct ifnet {
 	int	if_amcount;		/* number of all-multicast requests */
 	struct	ifaddr	*if_addr;	/* pointer to link-level address */
 	const u_int8_t *if_broadcastaddr; /* linklevel broadcast bytestring */
-	struct	rwlock if_afdata_lock;
+	struct  rmlock if_afdata_lock;
 	void	*if_afdata[AF_MAX];
 	int	if_afdata_initialized;
 
@@ -408,21 +410,23 @@ EVENTHANDLER_DECLARE(group_change_event, group_change_event_handler_t);
 #endif /* _SYS_EVENTHANDLER_H_ */
 
 #define	IF_AFDATA_LOCK_INIT(ifp)	\
-	rw_init(&(ifp)->if_afdata_lock, "if_afdata")
+        rm_init(&(ifp)->if_afdata_lock, "if_afdata")
 
-#define	IF_AFDATA_WLOCK(ifp)	rw_wlock(&(ifp)->if_afdata_lock)
-#define	IF_AFDATA_RLOCK(ifp)	rw_rlock(&(ifp)->if_afdata_lock)
-#define	IF_AFDATA_WUNLOCK(ifp)	rw_wunlock(&(ifp)->if_afdata_lock)
-#define	IF_AFDATA_RUNLOCK(ifp)	rw_runlock(&(ifp)->if_afdata_lock)
+#define  IF_AFDATA_RLOCK_TRACKER  struct rm_priotracker _afdata_tracker
+#define  IF_AFDATA_WLOCK(ifp)     rm_wlock(&(ifp)->if_afdata_lock)
+#define  IF_AFDATA_RLOCK(ifp)     rm_rlock(&(ifp)->if_afdata_lock,\
+	&_afdata_tracker)
+#define  IF_AFDATA_WUNLOCK(ifp)   rm_wunlock(&(ifp)->if_afdata_lock)
+#define  IF_AFDATA_RUNLOCK(ifp)   rm_runlock(&(ifp)->if_afdata_lock,\
+        &_afdata_tracker)
 #define	IF_AFDATA_LOCK(ifp)	IF_AFDATA_WLOCK(ifp)
 #define	IF_AFDATA_UNLOCK(ifp)	IF_AFDATA_WUNLOCK(ifp)
-#define	IF_AFDATA_TRYLOCK(ifp)	rw_try_wlock(&(ifp)->if_afdata_lock)
-#define	IF_AFDATA_DESTROY(ifp)	rw_destroy(&(ifp)->if_afdata_lock)
+#define  IF_AFDATA_DESTROY(ifp)   rm_destroy(&(ifp)->if_afdata_lock)
 
-#define	IF_AFDATA_LOCK_ASSERT(ifp)	rw_assert(&(ifp)->if_afdata_lock, RA_LOCKED)
-#define	IF_AFDATA_RLOCK_ASSERT(ifp)	rw_assert(&(ifp)->if_afdata_lock, RA_RLOCKED)
-#define	IF_AFDATA_WLOCK_ASSERT(ifp)	rw_assert(&(ifp)->if_afdata_lock, RA_WLOCKED)
-#define	IF_AFDATA_UNLOCK_ASSERT(ifp)	rw_assert(&(ifp)->if_afdata_lock, RA_UNLOCKED)
+#define  IF_AFDATA_LOCK_ASSERT(ifp)    rm_assert(&(ifp)->if_afdata_lock, RA_LOCKED)
+#define  IF_AFDATA_RLOCK_ASSERT(ifp)   rm_assert(&(ifp)->if_afdata_lock, RA_RLOCKED)
+#define  IF_AFDATA_WLOCK_ASSERT(ifp)   rm_assert(&(ifp)->if_afdata_lock, RA_WLOCKED)
+#define  IF_AFDATA_UNLOCK_ASSERT(ifp)  rm_assert(&(ifp)->if_afdata_lock, RA_UNLOCKED)
 
 /*
  * 72 was chosen below because it is the size of a TCP/IP

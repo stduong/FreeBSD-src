@@ -44,6 +44,7 @@
 #include <sys/priv.h>
 #include <sys/proc.h>
 #include <sys/protosw.h>
+#include <sys/rmlock.h>
 #include <sys/rwlock.h>
 #include <sys/signalvar.h>
 #include <sys/socket.h>
@@ -541,6 +542,7 @@ rtm_get_jailed(struct rt_addrinfo *info, struct ifnet *ifp,
 static int
 route_output(struct mbuf *m, struct socket *so, ...)
 {
+        RIB_RLOCK_TRACKER;
 	struct rt_msghdr *rtm = NULL;
 	struct rtentry *rt = NULL;
 	struct rib_head *rnh;
@@ -1841,6 +1843,7 @@ sysctl_ifmalist(int af, struct walkarg *w)
 static int
 sysctl_rtsock(SYSCTL_HANDLER_ARGS)
 {
+        RIB_RLOCK_TRACKER;
 	int	*name = (int *)arg1;
 	u_int	namelen = arg2;
 	struct rib_head *rnh = NULL; /* silence compiler. */

@@ -4432,6 +4432,7 @@ static void
 ta_foreach_kfib(void *ta_state, struct table_info *ti, ta_foreach_f *f,
     void *arg)
 {
+	RIB_RLOCK_TRACKER;
 	struct rib_head *rh;
 	int error;
 

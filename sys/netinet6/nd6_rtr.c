@@ -749,6 +749,7 @@ defrouter_del(struct nd_defrouter *dr)
 void
 defrouter_select_fib(int fibnum)
 {
+	IF_AFDATA_RLOCK_TRACKER;
 	struct nd_defrouter *dr, *selected_dr, *installed_dr;
 	struct llentry *ln = NULL;
 
@@ -1556,6 +1557,7 @@ end:
 static struct nd_pfxrouter *
 find_pfxlist_reachable_router(struct nd_prefix *pr)
 {
+	IF_AFDATA_RLOCK_TRACKER;
 	struct nd_pfxrouter *pfxrtr;
 	struct llentry *ln;
 	int canreach;

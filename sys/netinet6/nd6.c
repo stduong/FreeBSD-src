@@ -1392,6 +1392,7 @@ restart:
 int
 nd6_is_addr_neighbor(const struct sockaddr_in6 *addr, struct ifnet *ifp)
 {
+	IF_AFDATA_RLOCK_TRACKER;
 	struct llentry *lle;
 	int rc = 0;
 
@@ -1634,6 +1635,7 @@ nd6_rtrequest(int req, struct rtentry *rt, struct rt_addrinfo *info)
 int
 nd6_ioctl(u_long cmd, caddr_t data, struct ifnet *ifp)
 {
+	IF_AFDATA_RLOCK_TRACKER;
 	struct in6_ndireq *ndi = (struct in6_ndireq *)data;
 	struct in6_nbrinfo *nbi = (struct in6_nbrinfo *)data;
 	struct in6_ndifreq *ndif = (struct in6_ndifreq *)data;
@@ -1965,6 +1967,7 @@ void
 nd6_cache_lladdr(struct ifnet *ifp, struct in6_addr *from, char *lladdr,
     int lladdrlen, int type, int code)
 {
+	IF_AFDATA_RLOCK_TRACKER;
 	struct llentry *ln = NULL, *ln_tmp;
 	int is_newentry;
 	int do_update;
@@ -2257,6 +2260,7 @@ nd6_resolve(struct ifnet *ifp, int is_gw, struct mbuf *m,
     const struct sockaddr *sa_dst, u_char *desten, uint32_t *pflags,
     struct llentry **plle)
 {
+	IF_AFDATA_RLOCK_TRACKER;
 	struct llentry *ln = NULL;
 	const struct sockaddr_in6 *dst6;
 
@@ -2334,6 +2338,7 @@ nd6_resolve_slow(struct ifnet *ifp, int flags, struct mbuf *m,
     const struct sockaddr_in6 *dst, u_char *desten, uint32_t *pflags,
     struct llentry **plle)
 {
+	IF_AFDATA_RLOCK_TRACKER;
 	struct llentry *lle = NULL, *lle_tmp;
 	struct in6_addr *psrc, src;
 	int send_ns, ll_len;

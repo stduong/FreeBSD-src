@@ -207,6 +207,7 @@ scope6_set(struct ifnet *ifp, struct scope6_id *idlist)
 static int
 scope6_get(struct ifnet *ifp, struct scope6_id *idlist)
 {
+	IF_AFDATA_RLOCK_TRACKER;
 	struct scope6_id *sid;
 
 	/* We only need to lock the interface's afdata for SID() to work. */
@@ -393,6 +394,7 @@ sa6_recoverscope(struct sockaddr_in6 *sin6)
 int
 in6_setscope(struct in6_addr *in6, struct ifnet *ifp, u_int32_t *ret_id)
 {
+	IF_AFDATA_RLOCK_TRACKER;
 	int scope;
 	u_int32_t zoneid = 0;
 	struct scope6_id *sid;

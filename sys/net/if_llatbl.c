@@ -83,6 +83,7 @@ static int htable_foreach_lle(struct lltable *llt, llt_foreach_cb_t *f,
 static int
 lltable_dump_af(struct lltable *llt, struct sysctl_req *wr)
 {
+	IF_AFDATA_RLOCK_TRACKER;
 	int error;
 
 	LLTABLE_LOCK_ASSERT();
@@ -443,6 +444,7 @@ struct llentry *
 llentry_alloc(struct ifnet *ifp, struct lltable *lt,
     struct sockaddr_storage *dst)
 {
+	IF_AFDATA_RLOCK_TRACKER;
 	struct llentry *la, *la_tmp;
 
 	IF_AFDATA_RLOCK(ifp);

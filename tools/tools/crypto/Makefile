@@ -25,7 +25,7 @@
 # SUCH DAMAGE.
 #
 
-ALL=	cryptotest cryptokeytest cryptostats \
+ALL=	cryptotest cryptostats \
 	ubsecstats hifnstats ipsecstats safestats
 BINDIR=	/usr/local/bin
 

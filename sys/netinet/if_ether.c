@@ -444,6 +444,7 @@ arpresolve_full(struct ifnet *ifp, int is_gw, int flags, struct mbuf *m,
 	const struct sockaddr *dst, u_char *desten, uint32_t *pflags,
 	struct llentry **plle)
 {
+	IF_AFDATA_RLOCK_TRACKER;
 	struct llentry *la = NULL, *la_tmp;
 	struct mbuf *curr = NULL;
 	struct mbuf *next = NULL;
@@ -610,6 +611,7 @@ arpresolve(struct ifnet *ifp, int is_gw, struct mbuf *m,
 	const struct sockaddr *dst, u_char *desten, uint32_t *pflags,
 	struct llentry **plle)
 {
+	IF_AFDATA_RLOCK_TRACKER;
 	struct llentry *la = NULL;
 
 	if (pflags != NULL)
@@ -786,6 +788,7 @@ SYSCTL_INT(_net_link_ether_inet, OID_AUTO, allow_multicast, CTLFLAG_RW,
 static void
 in_arpinput(struct mbuf *m)
 {
+	IF_AFDATA_RLOCK_TRACKER;
 	struct rm_priotracker in_ifa_tracker;
 	struct arphdr *ah;
 	struct ifnet *ifp = m->m_pkthdr.rcvif;
