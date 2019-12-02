@@ -44,7 +44,7 @@ struct rib_head {
 	rt_gen_t		rnh_gen;	/* generation counter */
 	int			rnh_multipath;	/* multipath capable ? */
 	struct radix_node	rnh_nodes[3];	/* empty tree for common case */
-	struct rwlock		rib_lock;	/* config/data path lock */
+	struct rmlock		rib_lock;	/* config/data path lock */
 	struct radix_mask_head	rmhead;		/* masks radix head */
 };
 
