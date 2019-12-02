@@ -443,7 +443,7 @@ vfs_setpublicfs(struct mount *mp, struct netexport *nep,
 static struct netcred *
 vfs_export_lookup(struct mount *mp, struct sockaddr *nam)
 {
-	RADIX_NODE_HEAD_RLOCK_TRACKER
+	RADIX_NODE_HEAD_RLOCK_TRACKER;
 	struct netexport *nep;
 	struct netcred *np;
 	struct radix_node_head *rnh;
